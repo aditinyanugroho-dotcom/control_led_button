@@ -1,0 +1,31 @@
+// Pin LED (output): merah, biru, kuning
+const int ledPin[3] = {8, 9, 10};
+// Pin tombol (input): sesuai urutan LED
+const int btnPin[3] = {2, 3, 4};
+
+// Status nyala/mati tiap LED
+bool ledState[3] = {false, false, false};
+// Kondisi tombol pada putaran sebelumnya
+bool lastBtn[3]  = {HIGH, HIGH, HIGH};
+
+void setup() {
+  for (int i = 0; i < 3; i++) {
+    pinMode(ledPin[i], OUTPUT);        // LED sebagai output
+    pinMode(btnPin[i], INPUT_PULLUP);  // tombol memakai pull-up internal
+    digitalWrite(ledPin[i], LOW);      // pastikan LED mati saat mulai
+  }
+}
+
+void loop() {
+  for (int i = 0; i < 3; i++) {
+    bool now = digitalRead(btnPin[i]);   // baca kondisi tombol sekarang
+
+    // HIGH -> LOW berarti tombol baru ditekan
+    if (lastBtn[i] == HIGH && now == LOW) {
+      ledState[i] = !ledState[i];        // balik status LED (toggle)
+      digitalWrite(ledPin[i], ledState[i]);
+      delay(30);                         // debounce
+    }
+    lastBtn[i] = now;                    // simpan untuk putaran berikutnya
+  }
+}
